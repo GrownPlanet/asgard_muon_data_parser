@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+emport matplotlib.pyplot as plt
 import numpy as np
 
 # formatting
@@ -23,9 +23,10 @@ for line in content:
     muon_count[len(muon_count) - 1] += 1
 
 height_interval = [f"{i*100}-{(i+1)*100}" for i in height_interval]
-with open("out_100m.txt", "w") as file:
+with open("out_100m.csv", "w") as file:
+    file.write("height_interval;muons_counted\n")
     for (i, v) in enumerate(muon_count):
-        file.write(f"{height_interval[i]} {v}\n")
+        file.write(f"{height_interval[i]};{v}\n")
 
 # matplotlib
 muon_count.pop(0)
@@ -44,6 +45,6 @@ nth = 50
 ax.set_xticks(x[::nth])
 ax.set_xticklabels([height_interval[i] for i in range(0, len(height_interval), nth)])
 
-plt.savefig('muons.png', dpi=100)
+plt.savefig("muons_100m.png", dpi=100)
 
 plt.show()

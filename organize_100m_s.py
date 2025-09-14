@@ -7,7 +7,6 @@ content = file.read().splitlines()
 
 line = content.pop()
 dat = [float(d) for d in line.split(" ")]
-# base_height = dat[7]
 cur_height = 0
 startime = -1 # erros will be more vissible
 endtime = -1
@@ -31,9 +30,12 @@ for line in content:
     muon_count[len(muon_count) - 1] += 1
 
 height_interval = [f"{i*100}-{(i+1)*100}" for i in height_interval]
-with open("out_100m_s.txt", "w") as file:
-    for (i, v) in enumerate(muon_count):
-        file.write(f"{height_interval[i]} {v}\n")
+with open("out_100m_s.csv", "w") as file:
+    file.write(f"height_interval;muons_counted_per_second;time_interval\n")
+    for i in range(len(delta_t)):
+        v_mc = muon_count[i]
+        v_dt = delta_t[i]
+        file.write(f"{height_interval[i]};{v_mc};{v_dt}\n".replace(".", ","))
 
 # matplotlib
 muon_count.pop(0)
@@ -47,18 +49,22 @@ delta_t.pop(len(delta_t) - 1)
 
 x = np.arange(len(muon_count))
 fig, ax = plt.subplots(layout="tight", figsize=(16,9))
-ax.bar(x, muon_count, width=1)
+ax.bar(x, muon_count, width=1, label="muons per second")
 ax.set_ylabel("muons counted/second")
 ax.set_xlabel("height interval (m)")
 
 ax2 = ax.twinx()
-ax2.plot(delta_t, 'r')
+ax2.plot(delta_t, 'r', label="time interval")
 ax2.set_ylabel("time interval")
+
+handles1, labels1 = ax.get_legend_handles_labels()
+handles2, labels2 = ax2.get_legend_handles_labels()
+ax.legend(handles1 + handles2, labels1 + labels2)
 
 nth = 50
 ax.set_xticks(x[::nth])
 ax.set_xticklabels([height_interval[i] for i in range(0, len(height_interval), nth)])
 
-plt.savefig('muons.png', dpi=100)
+plt.savefig("muons_100m_s.png", dpi=100)
 
 plt.show()
